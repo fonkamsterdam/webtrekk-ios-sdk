@@ -15,8 +15,10 @@ public protocol ProductListTracker: class {
      */
     #if !os(watchOS)
         func track(commonProperties: PageViewEvent, viewController: UIViewController?)
+        func track(commonActionProperties: ActionEvent, viewController: UIViewController?)
     #else
         func track(commonProperties: PageViewEvent, viewController: WKInterfaceController?)
+        func track(commonActionProperties: ActionEvent, viewController: WKInterfaceController?)
     #endif
 }
 /** that is extension to make possible optional parameter viewController for track*/
@@ -26,9 +28,15 @@ public extension ProductListTracker {
     func track(commonProperties: PageViewEvent, viewController: UIViewController? = nil) {
         self.track(commonProperties: commonProperties, viewController: viewController)
     }
+    func track(commonActionProperties: ActionEvent, viewController: UIViewController? = nil) {
+        self.track(commonActionProperties: commonActionProperties, viewController: viewController)
+    }
     #else
     func track(commonProperties: PageViewEvent, viewController: WKInterfaceController? = nil) {
         self.track(commonProperties: commonProperties, viewController: viewController)
+    }
+    func track(commonActionProperties: ActionEvent, viewController: WKInterfaceController? = nil) {
+        self.track(commonActionProperties: commonActionProperties, viewController: viewController)
     }
     #endif
 }

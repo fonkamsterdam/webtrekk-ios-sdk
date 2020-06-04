@@ -46,38 +46,9 @@ internal final class ProductListTrackerImpl: ProductListTracker {
         let webtrekk = WebtrekkTracking.instance()
         //setup ecommens status for each properties
         self.ecommerceProperties.forEach {(key, value) in
-            var ecommercePropertiesResult = commonProperties.ecommerceProperties
-            ecommercePropertiesResult = ecommercePropertiesResult.merged(over: value)
-
-            if ecommercePropertiesResult.status == nil {
-                ecommercePropertiesResult.status = key
-            }
-
-            //check if there is products in list if no skeep tracking
-            guard let _ = ecommercePropertiesResult.products else {
-                WebtrekkTracking.logger.logError("""
-                        Tracking won't be done. No products to track. Please call addTrackingData with products before this call
-                    """)
+            guard var ecommercePropertiesResult = self.createEcommercePropertiesResult(properties: commonProperties.ecommerceProperties, key: key, value: value) else {
                 return
             }
-
-            let count = ecommercePropertiesResult.products!.count
-
-            //update position, save position or add order
-            for i in 0..<count {
-                let name = ecommercePropertiesResult.products![i].name
-                if key != .list {
-                    ecommercePropertiesResult.products![i].position = key == .viewed ?
-                        self.orderSaver.getLastPosition(product: name) :
-                        self.orderSaver.getFirstPosition(product: name)
-                    if key == .addedToBasket {
-                        self.orderSaver.saveAddOrder(product: ecommercePropertiesResult.products![i])
-                    }
-                } else {//equal to list
-                    self.orderSaver.savePositions(product: ecommercePropertiesResult.products![i])
-                }
-            }
-            self.orderSaver.save()
 
             if key == .purchased {
                 //resort
@@ -109,6 +80,82 @@ internal final class ProductListTrackerImpl: ProductListTracker {
             }
         }
         self.ecommerceProperties.removeAll()
+    }
+    
+    func track(commonActionProperties: ActionEvent, viewController: UIController? = nil) {
+        let webtrekk = WebtrekkTracking.instance()
+        //setup ecommens status for each properties
+        self.ecommerceProperties.forEach {(key, value) in
+            guard var ecommercePropertiesResult = self.createEcommercePropertiesResult(properties: commonActionProperties.ecommerceProperties, key: key, value: value) else {
+                return
+            }
+
+            if key == .purchased {
+                //resort
+                ecommercePropertiesResult.products!.sort {(product1, product2) in
+                    return self.orderSaver.getAddOrder(product: product1.name) < self.orderSaver.getAddOrder(product: product2.name)
+                }
+            }
+
+            //send
+
+            let actionEvent = ActionEvent(
+                actionProperties: commonActionProperties.actionProperties,
+                pageProperties: commonActionProperties.pageProperties,
+                advertisementProperties: commonActionProperties.advertisementProperties, ecommerceProperties: ecommercePropertiesResult,
+                ipAddress: commonActionProperties.ipAddress,
+                sessionDetails: commonActionProperties.sessionDetails,
+                userProperties: commonActionProperties.userProperties,
+                variables: commonActionProperties.variables)
+
+            if let controller = viewController {
+                let tracker = WebtrekkTracking.trackerForAutotrackedViewController(controller)
+                tracker.trackAction(actionEvent)
+            } else {
+                webtrekk.trackAction(actionEvent)
+            }
+
+            if key == .purchased {
+                self.orderSaver.deleteAll()
+            }
+        }
+        self.ecommerceProperties.removeAll()
+    }
+    
+    func createEcommercePropertiesResult(properties: EcommerceProperties, key: EcommerceProperties.Status, value: EcommerceProperties) -> EcommerceProperties? {
+        var ecommercePropertiesResult = properties
+        ecommercePropertiesResult = ecommercePropertiesResult.merged(over: value)
+
+        if ecommercePropertiesResult.status == nil {
+            ecommercePropertiesResult.status = key
+        }
+
+        //check if there is products in list if no skeep tracking
+        guard let _ = ecommercePropertiesResult.products else {
+            WebtrekkTracking.logger.logError("""
+                    Tracking won't be done. No products to track. Please call addTrackingData with products before this call
+                """)
+            return nil
+        }
+
+        let count = ecommercePropertiesResult.products!.count
+
+        //update position, save position or add order
+        for i in 0..<count {
+            let name = ecommercePropertiesResult.products![i].name
+            if key != .list {
+                ecommercePropertiesResult.products![i].position = key == .viewed ?
+                    self.orderSaver.getLastPosition(product: name) :
+                    self.orderSaver.getFirstPosition(product: name)
+                if key == .addedToBasket {
+                    self.orderSaver.saveAddOrder(product: ecommercePropertiesResult.products![i])
+                }
+            } else {//equal to list
+                self.orderSaver.savePositions(product: ecommercePropertiesResult.products![i])
+            }
+        }
+        self.orderSaver.save()
+        return ecommercePropertiesResult
     }
 
     /** this class is store data about product position and save it to memory*/
