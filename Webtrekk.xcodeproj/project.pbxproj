@@ -1115,6 +1115,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 4.15.12;
 				OTHER_SWIFT_FLAGS = "-DCARTHAGE_CONFIG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Webtrekk.Webtrekk;
 				PRODUCT_NAME = Webtrekk;
@@ -1142,6 +1143,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 4.15.12;
 				OTHER_SWIFT_FLAGS = "-DCARTHAGE_CONFIG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Webtrekk.Webtrekk;
 				PRODUCT_NAME = Webtrekk;
