@@ -266,6 +266,7 @@
 		9F9E5F261F27775100FC5246 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		9F9E5F281F27775D00FC5246 /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
 		9FE24FE71FFCD9490074A8CA /* StorePendingRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorePendingRequest.swift; sourceTree = "<group>"; };
+		CC7E983D25A344DB003F99E4 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -312,6 +313,7 @@
 		0F2D216F1EDEA18500D09ADF = {
 			isa = PBXGroup;
 			children = (
+				CC7E983D25A344DB003F99E4 /* Package.swift */,
 				5AE4AD7E2270A9A500AAD7CC /* README.md */,
 				5AF9C97322F1B63D007F987E /* LICENSE.md */,
 				5AE4AD832270AAA000AAD7CC /* Webtrekk.podspec */,
