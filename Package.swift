@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "Webtrekk", targets: ["Webtrekk"]),
     ],
     targets: [
-        .target(name: "Webtrekk", path: "Sources")
+        .target(name: "Webtrekk", path: "Source/**/*.swift")
     ],
     swiftLanguageVersions: [
         .v5
